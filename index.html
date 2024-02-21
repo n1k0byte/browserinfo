@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browser Information</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+    }
+    #browser-info {
+        width: 60%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+    #browser-info h2 {
+        text-align: center;
+        color: #333;
+    }
+    #browser-info ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    #browser-info ul li {
+        margin-bottom: 10px;
+    }
+    #ip-section {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 20px;
+    }
+    #ip-section label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    #ip-address {
+        font-family: monospace;
+        margin-bottom: 10px;
+        color: transparent;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); 
+    }
+    #reveal-ip-btn {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div id="browser-info">
+    <h2>Browser Information</h2>
+    <ul>
+        <li><strong>Browser Name:</strong> <span id="browser-name"></span></li>
+        <li><strong>Browser Version:</strong> <span id="browser-version"></span></li>
+        <li><strong>User-Agent:</strong> <span id="user-agent"></span></li>
+        <li><strong>Operating System:</strong> <span id="os"></span></li>
+        <li><strong>Javascript Status:</strong> <span id="javascript-status"></span></li>
+        <li><strong>Cookies Status:</strong> <span id="cookies-status"></span></li>
+        <li><strong>Language:</strong> <span id="language"></span></li>
+        <li><strong>Browser Size:</strong> <span id="browser-size"></span></li>
+        <li><strong>Screen Size:</strong> <span id="screen-size"></span></li>
+        <li><strong>Color Depth:</strong> <span id="color-depth"></span></li>
+    </ul>
+</div>
+
+<div id="ip-section">
+    <label for="ip-address">Your IP Address:</label>
+    <span id="ip-address">Loading...</span>
+    <button id="reveal-ip-btn">Reveal IP</button>
+</div>
+
+<script>
+    function revealIP() {
+        document.getElementById("ip-address").style.color = "black"; 
+        document.getElementById("ip-address").style.textShadow = "none";
+    }
+
+    document.getElementById("reveal-ip-btn").addEventListener("click", function() {
+        revealIP();
+    });
+
+    var userAgent = navigator.userAgent;
+    var browserName = "Unknown";
+    var browserVersion = "Unknown";
+
+    if (userAgent.includes("Firefox")) {
+        browserName = "Firefox";
+    } else if (userAgent.includes("Chrome")) {
+        browserName = "Chrome";
+    } else if (userAgent.includes("Edg")) {
+        browserName = "Edge";
+    } else if (userAgent.includes("Opera") || userAgent.includes("OPR")) {
+        browserName = "Opera";
+    }
+
+    var versionIndex = userAgent.indexOf(browserName) + browserName.length + 1;
+    browserVersion = userAgent.substring(versionIndex, versionIndex + 5); // Extracting version number
+
+    document.getElementById('user-agent').innerText = userAgent;
+    document.getElementById('browser-name').innerText = browserName;
+    document.getElementById('browser-version').innerText = browserVersion;
+    document.getElementById('os').innerText = navigator.platform;
+    document.getElementById('javascript-status').innerText = "Enabled";
+    document.getElementById('cookies-status').innerText = navigator.cookieEnabled ? 'Enabled' : 'Disabled';
+    document.getElementById('language').innerText = navigator.language;
+    document.getElementById('browser-size').innerText = window.innerWidth + 'x' + window.innerHeight;
+    document.getElementById('screen-size').innerText = screen.width + 'x' + screen.height;
+    document.getElementById('color-depth').innerText = screen.colorDepth;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            document.getElementById("ip-address").innerText = response.ip;
+        }
+    };
+    xhttp.open("GET", "https://api.ipify.org?format=json", true);
+    xhttp.send();
+</script>
+</body>
+</html>
